@@ -8,8 +8,35 @@
 </p>
 
 <p>
-  <strong>Url:</strong>
-  <%= @video.url %>
+  <div id="myElement">Loading the player...</div><br>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Average scores</th>
+        <th>Scores Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><%= @video.scores %></td>
+        <td><%= @video.scores_times %></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <input >
+
+  <%= link_to :Download, @video.url, class: "btn btn-info" %>
+
+  <script type="text/javascript">
+    jwplayer("myElement").setup({
+      file: 
+          'rtmp://s2ey2hbk14ns94.cloudfront.net/cfx/st/mp4:<%= @video.name %>',
+      image: "/assets/myVideo.jpg",
+      height: 360,
+      width: 640
+    });
+  </script>
 </p>
 
 <%= link_to 'Edit', edit_video_path(@video) %> |

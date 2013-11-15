@@ -30,7 +30,8 @@ class VideosController < ApplicationController
     s3 = aws_s3
     bucket = s3.buckets['tubeyou.video']
     obj = bucket.objects.create(@video.name, :file => video_file)
-    @video.url = obj.url_for(:read, :secure => false).to_s
+    obj.acl = :public_read
+    @video.url = URI::encode(cloud_front_url + @video.name)
 
     respond_to do |format|
       if @video.save
@@ -60,6 +61,10 @@ class VideosController < ApplicationController
   # DELETE /videos/1
   # DELETE /videos/1.json
   def destroy
+    s3 = aws_s3
+    bucket = s3.buckets['tubeyou.video']
+    bucket.objects[@video.name].delete
+
     @video.destroy
     respond_to do |format|
       format.html { redirect_to videos_url }
@@ -82,17 +87,14 @@ class VideosController < ApplicationController
     end
 
   # aws function
-  def aws_cloud_front
-    AWS::CloudFront.new(
-      :access_key_id => 'AKIAI5APD3BV3SUMCG7Q',
-      :secret_access_key => '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',
-      :region => "us-east-1")
+  def cloud_front_url
+    "http://d3e3zsnth95ia5.cloudfront.net/"
   end
 
   def aws_s3
     AWS::S3.new(
-      :access_key_id => 'AKIAI5APD3BV3SUMCG7Q',
-      :secret_access_key => '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',
+      :access_key_id => '',
+      :secret_access_key => '',
       :region => "us-east-1")
   end
 end
