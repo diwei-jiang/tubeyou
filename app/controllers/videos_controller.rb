@@ -27,10 +27,11 @@ class VideosController < ApplicationController
     @video = Video.new(video_params)
 
     video_file = params[:video][:video_file]
-    s3 = aws_s3
+    s3 = $S3
     bucket = s3.buckets['tubeyou.video']
     obj = bucket.objects.create(@video.name, :file => video_file)
-    @video.url = obj.url_for(:read, :secure => false).to_s
+    obj.acl = :public_read
+    @video.url = URI::encode(ENV['cf_http_url'] + @video.name)
 
     respond_to do |format|
       if @video.save
@@ -60,6 +61,10 @@ class VideosController < ApplicationController
   # DELETE /videos/1
   # DELETE /videos/1.json
   def destroy
+    s3 = $S3
+    bucket = s3.buckets['tubeyou.video']
+    bucket.objects[@video.name].delete
+
     @video.destroy
     respond_to do |format|
       format.html { redirect_to videos_url }
@@ -80,19 +85,4 @@ class VideosController < ApplicationController
     def video_params
       params.require(:video).permit(:name, :description, :url, :scores)
     end
-
-  # aws function
-  def aws_cloud_front
-    AWS::CloudFront.new(
-      :access_key_id => 'AKIAI5APD3BV3SUMCG7Q',
-      :secret_access_key => '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',
-      :region => "us-east-1")
-  end
-
-  def aws_s3
-    AWS::S3.new(
-      :access_key_id => 'AKIAI5APD3BV3SUMCG7Q',
-      :secret_access_key => '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',
-      :region => "us-east-1")
-  end
 end

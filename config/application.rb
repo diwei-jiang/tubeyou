@@ -19,5 +19,11 @@ module Tubeyou
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
+    config_file = 'config/aws_config.yml'
+    config = YAML.load(File.read(config_file))
+    AWS.config(config)
+    $S3 = AWS::S3.new( :region => "us-east-1" )
+    ENV['cf_http_url'] = "http://d3e3zsnth95ia5.cloudfront.net/"
+    ENV['cf_stream_rul'] = "rtmp://s2ey2hbk14ns94.cloudfront.net/"
   end
 end
