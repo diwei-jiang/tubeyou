@@ -32,7 +32,6 @@ class VideosController < ApplicationController
     obj = bucket.objects.create(@video.name, :file => video_file)
     obj.acl = :public_read
     @video.url = URI::encode(ENV['cf_http_url'] + @video.name)
-
     respond_to do |format|
       if @video.save
         format.html { redirect_to @video, notice: 'Video was successfully created.' }
