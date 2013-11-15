@@ -27,11 +27,12 @@ class VideosController < ApplicationController
     @video = Video.new(video_params)
 
     video_file = params[:video][:video_file]
-    s3 = $S3
-    bucket = s3.buckets['tubeyou.video']
+    @video.name = @video.name + File.extname(video_file.original_filename)
+    bucket = $S3.buckets['tubeyou.video']
     obj = bucket.objects.create(@video.name, :file => video_file)
     obj.acl = :public_read
     @video.url = URI::encode(ENV['cf_http_url'] + @video.name)
+
     respond_to do |format|
       if @video.save
         format.html { redirect_to @video, notice: 'Video was successfully created.' }

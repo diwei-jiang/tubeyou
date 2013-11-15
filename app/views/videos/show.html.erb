@@ -29,7 +29,7 @@
   <script type="text/javascript">
     jwplayer("myElement").setup({
       file: 
-          '<%= ENV["cf_stream_rul"] %>cfx/st/mp4:<%= @video.name %>',
+          '<%= ENV["cf_stream_rul"] %>cfx/st/<%= @video.name %>',
       height: 360,
       width: 640
     });
