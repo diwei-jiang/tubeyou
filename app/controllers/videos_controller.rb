@@ -75,6 +75,24 @@ class VideosController < ApplicationController
   def about
   end
 
+  def rate
+    @video = Video.find(params[:video_id])
+    if @video.scores_times != 0
+      scores = params[:scores].to_f
+      @video.scores = 
+          (@video.scores*@video.scores_times+scores)/(@video.scores_times+1)
+    else
+      @video.scores = params[:scores].to_i
+    end
+    @video.scores = format("%.2f",@video.scores).to_f 
+    @video.scores_times += 1
+
+    if @video.save
+      render :text => { scores: @video.scores,
+                        times: @video.scores_times }.to_json
+    end             
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_video

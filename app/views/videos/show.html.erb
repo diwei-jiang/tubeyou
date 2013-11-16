@@ -7,9 +7,11 @@
   <%= @video.description %>
 </p>
 
-<p>
-  <div id="myElement">Loading the player...</div><br>
-  <table class="table">
+
+<div id='myElement'>Loading the player...</div><br>
+
+<div class='scores_zone'>
+  <table class='table'>
     <thead>
       <tr>
         <th>Average scores</th>
@@ -17,24 +19,46 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td><%= @video.scores %></td>
-        <td><%= @video.scores_times %></td>
+       <tr>
+        <td id='video_scores'><%= @video.scores %></td>
+        <td id='video_scores_times'><%= @video.scores_times %></td>
       </tr>
     </tbody>
   </table>
+  <select id='scores_selection' class='form-control'>
+    <option value='1'>1(bad)</option>
+    <option value='2'>2(ok)</option>
+    <option value='3'>3(not bad)</option>
+    <option value='4'>4(good)</option>
+    <option value='5'>5(awesome)</option>
+  </select>
 
-  <%= link_to :Download, @video.url, class: "btn btn-info" %>
+<button class="btn btn-warning" id="rate_video">Rate it</button>
 
-  <script type="text/javascript">
-    jwplayer("myElement").setup({
-      file: 
-          '<%= ENV["cf_stream_rul"] %>cfx/st/<%= @video.name %>',
-      height: 360,
-      width: 640
-    });
-  </script>
-</p>
+<%= link_to :Download, @video.url, class: "btn btn-info" %>
+</div>
 
-<%= link_to 'Edit', edit_video_path(@video) %> |
+<script type="text/javascript">
+  jwplayer("myElement").setup({
+    file: '<%= ENV["cf_stream_rul"] %>cfx/st/<%= @video.name %>',
+    height: 360,
+    width: 640
+  });
+
+  $("#rate_video").click(function(){
+    $.ajax({
+      type: "GET",
+      url: '<%= rate_path %>',
+      data: {
+        video_id: '<%= @video.id %>',
+        scores: $("#scores_selection").val()
+      },
+      success: function(data){
+        data = JSON.parse(data);
+        $("#video_scores").html(data['scores']);
+        $("#video_scores_times").html(data['times']);
+      }
+    })
+  });
+</script>
 <%= link_to 'Back', videos_path %>

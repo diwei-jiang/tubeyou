@@ -2,6 +2,7 @@ Tubeyou::Application.routes.draw do
   resources :videos
   root 'videos#index'
   match '/about',   to: 'videos#about',   via: 'get'
+  match '/rate',   to: 'videos#rate',   via: 'get'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
