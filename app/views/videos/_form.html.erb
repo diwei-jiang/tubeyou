@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-md-6 col-md-offset-3">
-    <%= form_for(@video, remote: true) do |f| %>
+    <%= form_for(@video) do |f| %>
       <% if @video.errors.any? %>
         <div id="error_explanation">
           <h2><%= pluralize(@video.errors.count, "error") %> prohibited this video from being saved:</h2>

@@ -5,6 +5,7 @@ class VideosController < ApplicationController
   # GET /videos.json
   def index
     @videos = Video.all
+    @videos.sort_by! { |video| -video.scores }
   end
 
   # GET /videos/1
@@ -25,19 +26,35 @@ class VideosController < ApplicationController
   # POST /videos.json
   def create
     @video = Video.new(video_params)
-
     video_file = params[:video][:video_file]
-    @video.name = @video.name + File.extname(video_file.original_filename)
-    bucket = $S3.buckets['tubeyou.video']
-    obj = bucket.objects.create(@video.name, :file => video_file)
-    obj.acl = :public_read
-    @video.url = URI::encode(ENV['cf_http_url'] + @video.name)
+    errors = Hash.new
+    if video_file.nil?
+      ext = false
+      errors[:file] = "can't be null."
+    else
+      ext = File.extname(video_file.original_filename)
+    end
+    
+    if ext 
+      if ['.mp4', '.flv'].include?(ext)
+        @video.name = @video.name + File.extname(video_file.original_filename)
+        bucket = $S3.buckets['tubeyou.video']
+        obj = bucket.objects.create(@video.name, :file => video_file)
+        obj.acl = :public_read
+        @video.url = URI::encode(ENV['cf_http_url'] + @video.name)
+      else
+        errors[:file] = "must be a video."
+      end
+    end
 
     respond_to do |format|
       if @video.save
         format.html { redirect_to @video, notice: 'Video was successfully created.' }
         format.json { render action: 'show', status: :created, location: @video }
       else
+        errors.each do |k, v|
+         @video.errors.add(k, v)
+        end
         format.html { render action: 'new' }
         format.json { render json: @video.errors, status: :unprocessable_entity }
       end
