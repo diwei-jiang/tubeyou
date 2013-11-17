@@ -34,7 +34,7 @@ class VideosController < ApplicationController
     else
       ext = File.extname(video_file.original_filename)
     end
-    
+
     if ext 
       if ['.mp4', '.flv'].include?(ext)
         @video.name = @video.name + File.extname(video_file.original_filename)
@@ -105,6 +105,7 @@ class VideosController < ApplicationController
     @video.scores_times += 1
 
     if @video.save
+      cookies[@video.id] = true
       render :text => { scores: @video.scores,
                         times: @video.scores_times }.to_json
     end             
