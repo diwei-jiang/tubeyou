@@ -40,8 +40,14 @@
 
 <script type="text/javascript">
   jwplayer("myElement").setup({
-    file: '<%= ENV["cf_stream_rul"] %>cfx/st/<%= @video.name %>',
+    playlist: [{
+      sources: [
+        { file: '<%= ENV["cf_stream_rul"] %>cfx/st/<%= @video.name %>' },
+        { file: '<%= ENV["cf_http_url"] + @video.name %>' }
+      ]
+    }],
     height: 360,
+    primary: "flash",
     width: 640
   });
 
