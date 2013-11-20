@@ -36,7 +36,7 @@ class VideosController < ApplicationController
     end
 
     if ext
-      if ['.mp4','.flv','mov'].include?(ext)
+      if ['.mp4','.flv','.mov'].include?(ext)
         @video.name = @video.name + ext
         bucket = $S3.buckets['tubeyou.video']
         obj = bucket.objects.create(@video.name, :file => video_file)
