@@ -32,19 +32,12 @@ class VideosController < ApplicationController
       ext = false
       errors[:file] = "can't be null."
     else
-      ext = File.extname(video_file.original_filename)
-      ios_mobile = video_file.original_filename.scan(/video$/).first
+      ext = File.extname(video_file.original_filename.downcase)
     end
 
-    if ext||ios_mobile
-      if ['.mp4','.flv'].include?(ext)
+    if ext
+      if ['.mp4','.flv','mov'].include?(ext)
         @video.name = @video.name + ext
-        bucket = $S3.buckets['tubeyou.video']
-        obj = bucket.objects.create(@video.name, :file => video_file)
-        obj.acl = :public_read
-        @video.url = URI::encode(ENV['cf_http_url'] + @video.name)
-      elsif ios_mobile
-        @video.name = @video.name + '.mp4'
         bucket = $S3.buckets['tubeyou.video']
         obj = bucket.objects.create(@video.name, :file => video_file)
         obj.acl = :public_read
