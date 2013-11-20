@@ -32,7 +32,7 @@ class VideosController < ApplicationController
       ext = false
       errors[:file] = "can't be null."
     else
-      ext = File.extname(video_file.original_filename.downcase)
+      ext = File.extname(video_file.original_filename).downcase
     end
 
     if ext
