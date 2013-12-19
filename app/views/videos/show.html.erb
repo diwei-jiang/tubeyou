@@ -33,7 +33,7 @@
     <option value='5'>5(awesome)</option>
   </select>
 
-<button class="btn btn-warning" id="rate_video" <%= 'disabled' if cookies[@video.id] %>>Rate it</button>
+<button class="btn btn-warning" id="rate_video" >Rate it</button>
 
 <%= link_to :Download, @video.url, class: "btn btn-info" %>
 </div>
@@ -63,7 +63,6 @@
         data = JSON.parse(data);
         $("#video_scores").html(data['scores']);
         $("#video_scores_times").html(data['times']);
-        $("#rate_video").attr("disabled", "true")
       }
     })
   });
