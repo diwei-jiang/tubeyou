@@ -74,7 +74,7 @@ class VideosController < ApplicationController
       end
     end
   end
-
+  
   # DELETE /videos/1
   # DELETE /videos/1.json
   def destroy
